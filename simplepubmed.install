@@ -1,0 +1,400 @@
+<?php
+/**
+ * @file
+ * Install, update, and uninstall functions for the PubMed Field module.
+ */
+
+/**
+ * Implements hook_field_schema().
+ *
+ * Defines the database schema of the pubmed_field_pubmedids field.
+ */
+
+function simplepubmed_field_schema($field) {
+  if ($field['type'] == 'pubmed_field_pumbedids') {
+    $columns = array(
+      'pubmed_id' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'Term to use in a PubMed Query.',
+      ),
+      'pubmed_ids' => array(
+        'type' => 'blob',
+        'size' => 'normal',
+        'not null' => FALSE,
+        'description' => 'Pubmed IDs',
+        'serialize' => TRUE,
+      ),
+    );
+    $indexes = array(
+      'pubmed_term' => array('pubmed_id'),
+    );
+    return array(
+      'columns' => $columns, 
+      'indexes' => $indexes,
+    );
+  }
+}
+
+/**
+ * Implements hook_install().
+ */
+function simplepubmed_install() {
+  // Settings.
+  variable_set('simplepubmed_field_allow_autoupdate', TRUE);
+  variable_set('simplepubmed_field_limit_results', 1000);
+  $node_type = 'pumbed_content';
+  $ext = 1;
+  $node_type = is_pumbed_node_type_already_exist($node_type, $ext);
+  variable_set('simplepubmed_content_type', $node_type);
+  // Call a custom function to create content type.
+  _pumbed_create_content_type();
+}
+
+/**
+ * Function to create UNIQUE content type name.
+ *
+ * @see node_type_get_types()
+ */
+function is_pumbed_node_type_already_exist($node_type, $ext) {
+  $types = node_type_get_types();
+  foreach ($types as $type) {
+    if ($node_type == $type->type) {
+      $node_type = $node_type . '_' . $ext;
+      $node_type = is_pumbed_node_type_already_exist($node_type, $ext + 1);
+    }
+  }
+  return $node_type;
+}
+
+/**
+ * Function to create content type and its fields.
+ *
+ * @see node_add_body_field()
+ * @see node_type_save()
+ * @see field_create_field()
+ * @see field_create_instance()
+ */
+function _pumbed_create_content_type() {
+  $t = get_t();
+  $node_type = variable_get('simplepubmed_content_type', 'pumbed_content');
+  $node = array(
+    'type' => $node_type,
+    'name' => $t('PuMbed Content'),
+    'base' => 'node_content',
+    'locked' => TRUE,
+    'description' => $t('A content type to create nodes for PuMbed ID.'),
+    'title_label' => $t('PuMbed Title'),
+    'custom' => TRUE,
+  );
+  $content_type = node_type_set_defaults($node);
+  // Add body field using drupal function.
+  $body_instance = node_add_body_field($content_type, $t('PuMbed Description'));
+  $body_instance['widget']['settings']['rows'] = 2;
+  $body_instance['settings']['display_summary'] = 0;
+  $body_instance['settings']['text_processing'] = 0;
+  // Save our changes to the body field instance.
+  field_update_instance($body_instance);
+  // Save our changes node type.
+  node_type_save($content_type);
+  
+  // Create all the fields we are adding to our content type.
+  foreach (_pumbed_installed_fields($t) as $field) {
+    if (!field_info_field($field['field_name'])) {
+      field_create_field($field);
+	}
+  }
+
+  // Create all the instances for our fields.
+  foreach (_pumbed_installed_instances($t) as $instance) {
+    $instance['entity_type'] = 'node';
+    $instance['bundle'] = $node_type;
+    field_create_instance($instance);
+  }
+}
+/**
+ * Callback to define fields.
+ */
+function _pumbed_installed_fields($t) {
+  return array(
+    'field_pubmed_pumbed_url' => array(
+      'field_name' => 'field_pubmed_pumbed_url',
+      'type' => 'text',
+      'label' => $t('PuMbed URL'),
+	  'settings' => array( 'max_length' => 64),
+      ),
+	'field_pubmed_author' => array(
+      'field_name' => 'field_pubmed_author',
+      'type' => 'text',
+      'label' => $t('Author'),
+	  'settings' => array( 'max_length' => 64),
+      ),
+	'field_pubmed_author_list' => array(
+      'field_name' => 'field_pubmed_author_list',
+      'type' => 'text',
+      'label' => $t('Author List'),
+	  'cardinality' => '-1',
+	  'settings' => array( 'max_length' => 64, 'cardinality' => '-1'),
+      ),
+	'field_pubmed_journal' => array(
+      'field_name' => 'field_pubmed_journal',
+      'type' => 'text',
+      'label' => $t('Journal'),
+	  'settings' => array( 'max_length' => 64),
+      ),
+	'field_pubmed_pubmed_id' => array(
+      'field_name' => 'field_pubmed_pubmed_id',
+      'type' => 'text',
+      'label' => $t('PuMbed ID'),
+	  'settings' => array( 'max_length' => 64),
+      ),
+	'field_pubmed_pagination' => array(
+      'field_name' => 'field_pubmed_pagination',
+      'type' => 'text',
+      'label' => $t('Pagination'),
+	  'settings' => array( 'max_length' => 64),
+      ),
+	'field_pubmed_pag_combined' => array(
+      'field_name' => 'field_pubmed_pag_combined',
+      'type' => 'text',
+      'label' => $t('Pagination Combined'),
+	  'settings' => array( 'max_length' => 64),
+      ),
+	'field_pubmed_volume_' => array(
+      'field_name' => 'field_pubmed_volume_',
+      'type' => 'text',
+      'label' => $t('Volume'),
+	  'settings' => array( 'max_length' => 64),
+      ),
+	'field_pubmed_issue' => array(
+      'field_name' => 'field_pubmed_issue',
+      'type' => 'text',
+      'label' => $t('Issue'),
+	  'settings' => array( 'max_length' => 64),
+      ),
+	'field_pubmed_related_entity' => array(
+      'field_name' => 'field_pubmed_related_entity',
+      'type' => 'text',
+      'label' => $t('Related Entity'),
+	  'settings' => array( 'max_length' => 64),
+      ),
+	'field_pubmed_entity_type' => array(
+      'field_name' => 'field_pubmed_entity_type',
+      'type' => 'text',
+      'label' => $t('Related Entity Type'),
+	  'settings' => array( 'max_length' => 64),
+      ),
+	'field_pubmed_abstract' => array(
+      'field_name' => 'field_pubmed_abstract',
+      'type' => 'text_long',
+      'label' => $t('Abstract'),
+	  'settings' => array( 'rows' => 2),
+    ),
+	'field_pubmed_date_published' => array(
+      'field_name' => 'field_pubmed_date_published',
+      'type' => 'datetime',
+      'label' => $t('Published Date'),
+      'active' => '1',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'required' => FALSE, 
+      'entity_types' => array(),
+      'foreign keys' => array(),
+      'indexes' => array(),
+      'module' => 'date',
+	  'enddate_get'=> 0,
+      'settings' => array(
+        'enddate' => 0,
+		'enddate_get'=>0,
+        'enddate_required' => 0,
+        'granularity' => array(
+          'month' => 'month',
+          'year' => 'year',
+        ),
+        'repeat' => 0,
+        'timezone' => 'America/New_York',
+		'timezone_db'=> 'America/New_York',
+        'todate' => 'optional',
+        'tz_handling' => 'none',
+      ),
+      'translatable' => '0',
+      'type' => 'datetime',
+    ),
+  );
+}
+
+/**
+ * Callback to define fields.
+ */
+function _pumbed_installed_instances($t) {
+    return array(
+    'field_pubmed_pumbed_url' => array(
+      'field_name' => 'field_pubmed_pumbed_url',
+      'type' => 'text',
+      'label' => $t('PuMbed URL'),
+	  'description' => '',
+	  'cardinality' => 1,
+      'required' => FALSE,
+      ),
+	'field_pubmed_author' => array(
+      'field_name' => 'field_pubmed_author',
+      'type' => 'text',
+      'label' => $t('Author'),
+	  'description' => '',
+	  'cardinality' => 1,
+      'required' => FALSE,
+      ),
+	'field_pubmed_author_list' => array(
+      'field_name' => 'field_pubmed_author_list',
+      'type' => 'text',
+      'label' => $t('Author List'),
+	  'description' => '',
+	  'cardinality' => '-1',
+      'required' => FALSE,
+      ),
+	'field_pubmed_journal' => array(
+      'field_name' => 'field_pubmed_journal',
+      'type' => 'text',
+      'label' => $t('Journal'),
+	  'description' => '',
+	  'cardinality' => 1,
+      'required' => FALSE,
+      ),
+	'field_pubmed_pubmed_id' => array(
+      'field_name' => 'field_pubmed_pubmed_id',
+      'type' => 'text',
+      'label' => $t('PuMbed ID'),
+	  'description' => '',
+	  'cardinality' => 1,
+      'required' => FALSE,
+      ),
+	'field_pubmed_pagination' => array(
+      'field_name' => 'field_pubmed_pagination',
+      'type' => 'text',
+      'label' => $t('Pagination'),
+	  'description' => '',
+	  'cardinality' => 1,
+      'required' => FALSE,
+      ),
+	'field_pubmed_pag_combined' => array(
+      'field_name' => 'field_pubmed_pag_combined',
+      'type' => 'text',
+      'label' => $t('Pagination Combined'),
+	  'description' => '',
+	  'cardinality' => 1,
+      'required' => FALSE,
+      ),
+	'field_pubmed_volume_' => array(
+      'field_name' => 'field_pubmed_volume_',
+      'type' => 'text',
+      'label' => $t('Volume'),
+	  'description' => '',
+	  'cardinality' => 1,
+      'required' => FALSE,
+      ),
+	'field_pubmed_issue' => array(
+      'field_name' => 'field_pubmed_issue',
+      'type' => 'text',
+      'label' => $t('Issue'),
+	  'description' => '',
+	  'cardinality' => 1,
+      'required' => FALSE,
+      ),
+	'field_pubmed_related_entity' => array(
+      'field_name' => 'field_pubmed_related_entity',
+      'type' => 'text',
+      'label' => $t('Related Entity'),
+	  'description' => '',
+	  'cardinality' => 1,
+      'required' => FALSE,
+      ),
+	'field_pubmed_entity_type' => array(
+      'field_name' => 'field_pubmed_entity_type',
+      'type' => 'text',
+      'label' => $t('Related Entity Type'),
+	  'description' => '',
+	  'cardinality' => 1,
+      'required' => FALSE,
+      ),
+	'field_pubmed_abstract' => array(
+      'field_name' => 'field_pubmed_abstract',
+      'type' => 'text_long',
+      'label' => $t('Abstract'),
+	  'description' => '',
+	  'cardinality' => 1,
+      'required' => FALSE,
+    ),
+	'field_pubmed_date_published' => array(
+      'field_name' => 'field_pubmed_date_published',
+      'type' => 'datetime',
+      'label' => $t('Published Date'),
+	  'description' => '',
+	  'cardinality' => 1,
+      'required' => FALSE,
+      'entity_types' => array(),
+      'foreign keys' => array(),
+      'indexes' => array(),
+      'module' => 'date',
+	  'enddate_get'=> 0,
+      'settings' => array(
+        'enddate' => 0,
+        'enddate_required' => 0,
+        'granularity' => array(
+          'month' => 'month',
+          'year' => 'year',
+        ),
+        'repeat' => 0,
+        'timezone' => 'America/New_York',
+		'timezone_db'=> 'America/New_York',
+        'todate' => 'optional',
+        'tz_handling' => 'none',
+      ),
+      'translatable' => '0',
+	  'widget' => array(
+	    'type' => 'date_popup',
+        'active' => 1,
+        'module' => 'date',
+        'settings' => array(
+          'increment' => '15',
+          'input_format' => 'm/d/Y - H:i:s',
+          'input_format_custom' => '',
+          'label_position' => 'above',
+          'repeat_collapsed' => 0,
+          'text_parts' => array(),
+          'year_range' => '-10:+10',
+        ),
+	   ),
+
+    ),
+  );
+}
+	
+/**
+ * Implements hook_uninstall().
+ */
+function simplepubmed_uninstall() {
+  $node_type = variable_get('simplepubmed_content_type', 'pumbed_content');
+  // Delete content type and all fields.
+  $instances = field_info_instances('node', $node_type);
+  foreach ($instances as $instance_name => $instance) {
+    field_delete_instance($instance);
+  }
+  $instances = field_info_instances('node', $node_type);
+  foreach ($instances as $instance_name => $instance) {
+    field_delete_field($instance);
+  }
+  
+  $result= db_query("SELECT nid FROM {node} AS n WHERE n.type = '$node_type'");
+  foreach ($result as $record) {
+    node_delete($record->nid);
+  } 
+  
+  node_type_delete($node_type);
+  
+  // Settings.
+  variable_del('simplepubmed_field_allow_autoupdate');
+  variable_del('simplepubmed_field_limit_results');
+  variable_del('simplepubmed_content_type');
+}
+

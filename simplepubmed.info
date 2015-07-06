@@ -1,0 +1,5 @@
+name = SI PubMed Fields
+description = This module provides a field/widget to specify PubMed ID for a PubMed query. The results of the query will be associated to the node.
+core = 7.x
+configure = admin/config/services/manage-simplepubmed
+package = "PubMed"
