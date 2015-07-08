@@ -487,8 +487,13 @@ function save_new_publication($data, $nid, $type = NULL) {
 		  $dummy->field_author['und'][0]['value'] = $data->author;
 		}
 		if(count($data->authorlist)) {
-		  foreach($data->authorlist as $key=>$val) {
-			$dummy->field_pubmed_author['und'][]['value'] = $val;
+		  if(is_array($data->authorlist )) {
+		    foreach($data->authorlist as $key=>$val) {
+			  $dummy->field_pubmed_author['und'][]['value'] = $val;
+		    }
+		  }
+		  else {
+		    $dummy->field_pubmed_author['und'][]['value'] = '';
 		  }
 		}
 		if($data->journal) {
