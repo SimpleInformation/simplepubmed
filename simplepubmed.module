@@ -12,11 +12,11 @@
 function simplepubmed_menu() {
   $items = array();
   $items['admin/config/services/manage-simplepubmed'] = array(
-     'title' => 'Simple PubMed Comfig',
-     'description' => 'Simple PubMed Configuration',
+     'title' => 'Simple PubMed Configurations',
+     'description' => 'Simple PubMed Configurations',
      'page callback' => 'drupal_get_form',
      'page arguments' => array('manage_simplepubmed_settings'),
-     'access arguments' => array('administer Simple PubMed Configuration'),
+     'access arguments' => array('administer Simple PubMed Configurations'),
 	 'access callback' => 'simplepubmed__check_access',
      'type' => MENU_NORMAL_ITEM,
   );
@@ -528,7 +528,7 @@ function check_pumbid_exists($pumbid,$nid) {
 /**
  * Find nids not to delete
  */
-function get_all_nids_to_delete($nidstodelete) {
+function get_all_nids_to_delete($nidstodelete = NULL) {
   $nids = array();
   $nidstodelete = array();
   $result = db_query('SELECT field_name FROM {field_config} WHERE type = :type',
