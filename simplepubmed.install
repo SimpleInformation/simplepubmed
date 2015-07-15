@@ -81,16 +81,16 @@ function _pumbed_create_content_type() {
   $node_type = variable_get('simplepubmed_content_type', 'pumbed_content');
   $node = array(
     'type' => $node_type,
-    'name' => $t('PuMbed Content'),
+    'name' => $t('PubMed Content'),
     'base' => 'node_content',
     'locked' => TRUE,
-    'description' => $t('A content type to create nodes for PuMbed ID.'),
-    'title_label' => $t('PuMbed Title'),
+    'description' => $t('A content type to create nodes for PubMed ID.'),
+    'title_label' => $t('PubMed Title'),
     'custom' => TRUE,
   );
   $content_type = node_type_set_defaults($node);
   // Add body field using drupal function.
-  $body_instance = node_add_body_field($content_type, $t('PuMbed Description'));
+  $body_instance = node_add_body_field($content_type, $t('PubMed Description'));
   $body_instance['widget']['settings']['rows'] = 2;
   $body_instance['settings']['display_summary'] = 0;
   $body_instance['settings']['text_processing'] = 0;
@@ -121,7 +121,7 @@ function _pumbed_installed_fields($t) {
     'field_pubmed_pumbed_url' => array(
       'field_name' => 'field_pubmed_pumbed_url',
       'type' => 'text',
-      'label' => $t('PuMbed URL'),
+      'label' => $t('PubMed URL'),
 	  'settings' => array( 'max_length' => 64),
       ),
 	'field_pubmed_author' => array(
@@ -146,7 +146,7 @@ function _pumbed_installed_fields($t) {
 	'field_pubmed_pubmed_id' => array(
       'field_name' => 'field_pubmed_pubmed_id',
       'type' => 'text',
-      'label' => $t('PuMbed ID'),
+      'label' => $t('PubMed ID'),
 	  'settings' => array( 'max_length' => 64),
       ),
 	'field_pubmed_pagination' => array(
@@ -232,7 +232,7 @@ function _pumbed_installed_instances($t) {
     'field_pubmed_pumbed_url' => array(
       'field_name' => 'field_pubmed_pumbed_url',
       'type' => 'text',
-      'label' => $t('PuMbed URL'),
+      'label' => $t('PubMed URL'),
 	  'description' => '',
 	  'cardinality' => 1,
       'required' => FALSE,
@@ -264,7 +264,7 @@ function _pumbed_installed_instances($t) {
 	'field_pubmed_pubmed_id' => array(
       'field_name' => 'field_pubmed_pubmed_id',
       'type' => 'text',
-      'label' => $t('PuMbed ID'),
+      'label' => $t('PubMed ID'),
 	  'description' => '',
 	  'cardinality' => 1,
       'required' => FALSE,
