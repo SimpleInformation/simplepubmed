@@ -219,7 +219,6 @@ function _pumbed_installed_fields($t) {
         'tz_handling' => 'none',
       ),
       'translatable' => '0',
-      'type' => 'datetime',
     ),
   );
 }
