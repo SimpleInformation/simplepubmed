@@ -471,17 +471,15 @@ function save_new_publication($data, $nid, $type = NULL) {
 		  $dummy->field_pubmed_volume_['und'][0]['value'] = $data->volume_;
 		}	
 		if($data->shorttext) {
-		   if(isset($data->shorttext[0])) {
-		     $dummy->field_pubmed_abstract['und'][0]['value']  = '';
-			 if(is_array($data->shorttext )) {
-				 foreach($data->shorttext as $key=>$val) {
-				   $dummy->field_pubmed_abstract['und'][0]['value'] .= $val;
-				 }
-			 }
-		   }
-		   else {
-		     $dummy->field_pubmed_abstract['und'][0]['value'] = $data->shorttext;
-		   }
+		   $dummy->field_pubmed_abstract['und'][0]['value'] = '';
+		    if(is_array($data->shorttext )) {
+			  foreach($data->shorttext as $key=>$val) {
+				$dummy->field_pubmed_abstract['und'][0]['value'] .= $val;
+			  }
+			}
+		    else {
+		      $dummy->field_pubmed_abstract['und'][0]['value'] = $data->shorttext;
+		    }
 		}
 		if($data->author) {
 		  $dummy->field_pubmed_author['und'][0]['value'] = $data->author;
