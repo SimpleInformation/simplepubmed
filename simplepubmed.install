@@ -8,6 +8,8 @@
  * Implements hook_field_schema().
  *
  * Defines the database schema of the pubmed_field_pubmedids field.
+ * @param $field
+ * @return array
  */
 
 function simplepubmed_field_schema($field) {
@@ -56,6 +58,9 @@ function simplepubmed_install() {
  * Function to create UNIQUE content type name.
  *
  * @see node_type_get_types()
+ * @param $node_type
+ * @param $ext
+ * @return string
  */
 function is_pumbed_node_type_already_exist($node_type, $ext) {
   $types = node_type_get_types();
@@ -113,8 +118,11 @@ function _pumbed_create_content_type() {
     field_create_instance($instance);
   }
 }
+
 /**
  * Callback to define fields.
+ * @param $t
+ * @return array
  */
 function _pumbed_installed_fields($t) {
   return array(
@@ -225,6 +233,8 @@ function _pumbed_installed_fields($t) {
 
 /**
  * Callback to define fields.
+ * @param $t
+ * @return array
  */
 function _pumbed_installed_instances($t) {
     return array(

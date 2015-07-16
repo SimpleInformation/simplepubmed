@@ -149,9 +149,9 @@ class PubmedFieldEntrezClientnew {
    */
   public function getTool() {
     return $this->tool;
-  }
+    }
 
-  /**
+    /**
    * Sets a contact email address for NCBI.
    *
    * If you choose to provide an email address, we will use it to contact you
@@ -373,7 +373,8 @@ class PubmedFieldEntrezClientnew {
    * object. The root element is PubmedArticleSet.
    *
    * @param int $id
-   * @return SimpleXMLElement
+   * @return \SimpleXMLElement
+   * @throws \Exception
    */
   public function fetch($id) {
     $params['db'] = $this->getDatabase();
@@ -414,11 +415,12 @@ class PubmedFieldEntrezClientnew {
    *
    * The root element of the returned SimpleXML object is PubmedArticleSet.
    *
-   * @param $retStart
+   * @param int $retStart
    *   the sequential number of the first record retrieved - default=0
    *   which will retrieve the first record
-   * @return SimpleXMLElement
-   * @throws Exception
+   * @param bool $summaries
+   * @return \SimpleXMLElement
+   * @throws \Exception
    * @see search
    * @see setReturnMax
    */

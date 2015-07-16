@@ -68,7 +68,7 @@ function manage_simplepubmed_settings() {
 function simplepubmed_field_info() {
   return array(
     'pubmed_field_pumbedids' => array(
-      'label' => t('PudMed IDS'),
+      'label' => t('PubMed ID'),
       'description' => t('Stores PubMed terms used for querying the PubMed database (http://www.ncbi.nlm.nih.gov/pubmed?term=)'),
       'default_widget' => 'simplepubmed_textfield',
       'default_formatter' => 'simplepubmed_pumbedids',
@@ -247,7 +247,7 @@ function simplepubmed_field_validate_id($element, &$form_state) {
  */
 function _simplepubmed_query_pubmed($term,$nid) {
 
-  watchdog('simplepubmed', 'Query pubmed for PuMbed ID: @id.', array('@id' => $term));
+  watchdog('simplepubmed', 'Query pubmed for PubMed ID: @id.', array('@id' => $term));
   // Start the PubMed Query.
   try {
     if (!module_load_include('inc', 'simplepubmed', 'simplepubmed.entrezclient'))
@@ -390,7 +390,7 @@ function simplepubmed_cron() {
 /**
  * Implements cron pulling function
  */
-function data_simplepumbed_import() {
+function data_simplepubmed_import() {
   $del = get_all_nids_to_delete();
   $result = db_query('SELECT field_name FROM {field_config} WHERE type = :type',
     array(':type' => 'pubmed_field_pumbedids'));
@@ -517,7 +517,7 @@ function save_new_publication($data, $nid, $type = NULL) {
 }
 
 /**
- * Checks for the PumBed Ids is already Imported
+ * Checks to see if the PubMed Ids is already Imported
  */
 function check_pumbid_exists($pumbid,$nid) {
   $result = db_query("SELECT * FROM {field_data_field_pubmed_pubmed_id} WHERE `field_pubmed_pubmed_id_value`= '".$pumbid."'");
