@@ -564,7 +564,7 @@ function get_all_nids_to_delete($nidstodelete = NULL) {
 	  foreach($nidstodelete as $key=>$val) {
 	    try {
 		  // Delete the unwanted imported node
-	      node_delete($nid);
+	      node_delete($val);
 	    }
 		catch (Exception $e) {
 	      $proceed = 1;
