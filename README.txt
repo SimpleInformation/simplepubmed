@@ -42,5 +42,8 @@ At the 'admin/config/services/manage-simplepubmed' page can be used for publicat
 CREDITS
 --------
 
+Parts of this module came from davidn <https://www.drupal.org/u/davidn> and his Sandbox project<https://www.drupal.org/sandbox/nellessen/1780320>
+Parts of this also came from the Bibliography Module <https://www.drupal.org/project/biblio>
+Parts of this plugin are based on the EntrezClient of the no longer maintained project Entrez. A lot of thanks and credits to those guys!
 This module was created by Simple Information <http://www.simpleinformation.com>
 
