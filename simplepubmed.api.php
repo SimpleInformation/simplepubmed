@@ -17,5 +17,5 @@
  *   The Node id of the field the given field is associated to.
  */
 function hook_simplepubmed_field_update($publications, $nid) {
-  
+
 }
