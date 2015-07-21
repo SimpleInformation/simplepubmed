@@ -64,7 +64,7 @@ function manage_simplepubmed_settings() {
     '#type' => 'submit',
     '#value' => 'Import PubMed Data',
     '#weight' => 1,
-    '#submit' => array('data_simplepumbed_import'),
+    '#submit' => array('data_simplepubmed_import'),
   );
   return $form;
 }
@@ -72,15 +72,15 @@ function manage_simplepubmed_settings() {
 /**
  * Implements hook_field_info().
  *
- * Provides the field 'pubmed_field_pumbedids'.
+ * Provides the field 'pubmed_field_pubmedids'.
  */
 function simplepubmed_field_info() {
   return array(
-    'pubmed_field_pumbedids' => array(
+    'pubmed_field_pubmedids' => array(
       'label' => t('PubMed ID'),
       'description' => t('Stores PubMed terms used for querying the PubMed database (http://www.ncbi.nlm.nih.gov/pubmed?term=)'),
       'default_widget' => 'simplepubmed_textfield',
-      'default_formatter' => 'simplepubmed_pumbedids',
+      'default_formatter' => 'simplepubmed_pubmedids',
     ),
   );
 }
@@ -123,9 +123,9 @@ function simplepubmed_field_is_empty($item, $field) {
 function simplepubmed_field_formatter_info() {
   return array(
     // This displays a list of links to the search results of the given term.
-    'simplepubmed_pumbedids' => array(
+    'simplepubmed_pubmedids' => array(
       'label' => t('Simple list of links to the publications given by querying the PubMed db using this field`s input as the term.'),
-      'field types' => array('pubmed_field_pumbedids'),
+      'field types' => array('pubmed_field_pubmedids'),
     ),
   );
 }
@@ -151,7 +151,7 @@ function simplepubmed_field_formatter_view($entity_type, $entity, $field, $insta
           $item['pubmed_ids'] = array();
         }
         $element[$delta] = array(
-          '#markup' => theme('simplepubmed_pumbedids-list', array('publications' => $item['pubmed_ids'])),
+          '#markup' => theme('simplepubmed_pubmedids-list', array('publications' => $item['pubmed_ids'])),
         );
       }
       break;
@@ -172,7 +172,7 @@ function simplepubmed_field_widget_info() {
   return array(
     'simplepubmed_textfield' => array(
       'label' => t('Textfield'),
-      'field types' => array('pubmed_field_pumbedids'),
+      'field types' => array('pubmed_field_pubmedids'),
     ),
   );
 }
@@ -192,7 +192,7 @@ function simplepubmed_field_widget_form(&$form, &$form_state, $field, $instance,
   $widget['#delta'] = $delta;
   // Defines a simple text widget holding the term string.
   switch ($instance['widget']['type']) {
-    case 'simplepubmed_pumbedids':
+    case 'simplepubmed_pubmedids':
       $widget['#type'] = 'textfield';
       $widget['#weight'] = 1;
       $widget['#title'] = t('PubMed Search IDS');
@@ -351,7 +351,7 @@ function _simplepubmed_query_pubmed($term, $nid) {
  * Serialize pubmed_ids.
  */
 function simplepubmed_field_presave($entity_type, $entity, $field, $instance, $langcode, &$items) {
-  if ($field['type'] == 'pubmed_field_pumbedids') {
+  if ($field['type'] == 'pubmed_field_pubmedids') {
     foreach ($items as $delta => $item) {
       if (isset($item['pubmed_ids'])) {
         $items[$delta]['pubmed_ids'] = serialize($item['pubmed_ids']);
@@ -368,7 +368,7 @@ function simplepubmed_field_presave($entity_type, $entity, $field, $instance, $l
 function simplepubmed_field_load($entity_type, $entities, $field, $instances, $langcode, &$items, $age) {
   foreach ($entities as $id => $entity) {
     foreach ($items[$id] as $delta => $item) {
-      if ($field['type'] == 'pubmed_field_pumbedids') {
+      if ($field['type'] == 'pubmed_field_pubmedids') {
         $items[$id][$delta]['pubmed_ids'] = isset($item['pubmed_ids']) ?
           unserialize($item['pubmed_ids']) : array();
       }
@@ -448,7 +448,7 @@ function simplepubmed_invoke_pubmed_field_update($new_pubmed_ids, $old_pubmed_id
 function save_new_publication($data, $nid, $type = NULL) {
   $dummysave = '';
   if (isset($data->field_pubmed_id) && $nid) {
-    $node_type = variable_get('simplepubmed_content_type', 'pumbed_content');
+    $node_type = variable_get('simplepubmed_content_type', 'pubmed_content');
     $check = check_pumbid_exists($data->field_pubmed_id, $nid);
     if ($check) {
       try {
@@ -458,7 +458,7 @@ function save_new_publication($data, $nid, $type = NULL) {
         $dummy->status = 1;
         $dummy->type   = $node_type;
         $dummy->field_date_published = array();
-        $dummy->field_pubmed_pumbed_url = array();
+        $dummy->field_pubmed_pubmed_url = array();
         $dummy->field_pubmed_abstract = array();
         $dummy->field_pubmed_author = array();
         $dummy->field_pubmed_author_list = array();
@@ -477,7 +477,7 @@ function save_new_publication($data, $nid, $type = NULL) {
           $dummy->field_pubmed_date_published['und'][0]['date_type'] = 'datetime';
         }
         if ($data->pubmed_url) {
-          $dummy->field_pubmed_pumbed_url['und'][0]['value'] = $data->pubmed_url;
+          $dummy->field_pubmed_pubmed_url['und'][0]['value'] = $data->pubmed_url;
         }
         if ($data->pagination) {
           $dummy->field_pubmed_pagination['und'][0]['value'] = $data->pagination;
@@ -556,7 +556,7 @@ function get_all_nids_to_delete($nidstodelete = NULL) {
   $nids = array();
   $nidstodelete = array();
   $result = db_query('SELECT field_name FROM {field_config} WHERE type = :type',
-  array(':type' => 'pubmed_field_pumbedids'));
+  array(':type' => 'pubmed_field_pubmedids'));
   while ($field = $result->fetchObject()) {
     $subquery = db_select('field_data_' . $field->field_name, 'fd');
     $subquery->addField('fd', $field->field_name . '_pubmed_ids', 'pubmed_ids');
