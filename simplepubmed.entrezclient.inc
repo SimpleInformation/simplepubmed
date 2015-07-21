@@ -8,7 +8,9 @@
  * @see http://drupalcode.org/project/entrez.git
  * @see http://drupal.org/project/biblio
  */
-
+/**
+ *
+ */
 class PubmedFieldEntrezClientnew {
   const DEFAULT_DATABASE = 'pubmed';
 
@@ -85,6 +87,7 @@ class PubmedFieldEntrezClientnew {
    * Values available from EInfo, PubMed is the default db.
    *
    * @param string $database
+   *
    * @see getAvailableDatabases
    */
   public function setDatabase($database) {
@@ -104,6 +107,7 @@ class PubmedFieldEntrezClientnew {
    * Returns the available entrez databases from EInfo.
    *
    * @return array
+   *
    * @throws Exception
    */
   public function getAvailableDatabases() {
@@ -118,7 +122,7 @@ class PubmedFieldEntrezClientnew {
 
     if (isset($result->DbList->DbName)) {
       foreach ($result->DbList->DbName as $name) {
-        $databases[] = (string)$name;
+        $databases[] = (string) $name;
       }
     }
 
@@ -149,9 +153,9 @@ class PubmedFieldEntrezClientnew {
    */
   public function getTool() {
     return $this->tool;
-    }
+  }
 
-    /**
+  /**
    * Sets a contact email address for NCBI.
    *
    * If you choose to provide an email address, we will use it to contact you
@@ -205,9 +209,10 @@ class PubmedFieldEntrezClientnew {
    *
    * @param $minDate
    * @param $maxDate
+   *
    * @throws Exception
    */
-  public function setDateRange($minDate, $maxDate=NULL) {
+  public function setDateRange($minDate, $maxDate = NULL) {
     if (is_null($maxDate)) {
       $maxDate = date('Y/m/d');
     }
@@ -256,6 +261,7 @@ class PubmedFieldEntrezClientnew {
    * Sets the maximum number of items retrieved by a search query.
    *
    * @param int $number
+   *
    * @see search
    */
   public function setReturnMax($number) {
@@ -286,18 +292,21 @@ class PubmedFieldEntrezClientnew {
    *
    * If this is the first search for a given term a web environment and a query
    * key is retrieved from the NCBI server in addition to the result set.
-   * See http://eutils.ncbi.nlm.nih.gov/corehtml/query/static/esearch_help.html
+   * See http://eutils.ncbi.nlm.nih.gov/corehtml/query/static/esearch_help.html.
    *
    * @param int $retStart
    *   the sequential number of the first record retrieved - default=0
    *   which will retrieve the first record
+   *
    * @return SimpleXMLElement
    *   an array of PubMed IDs
+   *
    * @throws Exception
+   *
    * @see setReturnMax
    * @see setRelativeDate
    */
-  public function search($retStart=0) {
+  public function search($retStart = 0) {
     if (!is_null($this->webEnvironment)) {
       $params['WebEnv'] = $this->webEnvironment;
       $params['query_key'] = $this->queryKey;
@@ -326,9 +335,9 @@ class PubmedFieldEntrezClientnew {
     }
 
     if (isset($result->WebEnv)) {
-      $this->webEnvironment = (string)$result->WebEnv;
-      $this->queryKey = (int)$result->QueryKey;
-      $this->count = (int)$result->Count;
+      $this->webEnvironment = (string) $result->WebEnv;
+      $this->queryKey = (int) $result->QueryKey;
+      $this->count = (int) $result->Count;
     }
 
     return $result;
@@ -338,6 +347,7 @@ class PubmedFieldEntrezClientnew {
    * Returns the number of results for the previously set search terms.
    *
    * @return int
+   *
    * @throws Exception
    */
   public function count() {
@@ -361,7 +371,7 @@ class PubmedFieldEntrezClientnew {
       }
 
       if (isset($result->Count)) {
-        $this->count = (int)$result->Count;
+        $this->count = (int) $result->Count;
       }
     }
 
@@ -373,7 +383,9 @@ class PubmedFieldEntrezClientnew {
    * object. The root element is PubmedArticleSet.
    *
    * @param int $id
+   *
    * @return \SimpleXMLElement
+   *
    * @throws \Exception
    */
   public function fetch($id) {
@@ -383,7 +395,8 @@ class PubmedFieldEntrezClientnew {
 
     $this->query = self::BASE_URL . 'efetch.fcgi?' . http_build_query($params);
     $request_options = array(
-      'method' => 'POST');
+      'method' => 'POST',
+    );
     $result = drupal_http_request($this->query, $request_options);
     if ($result->code != 200) {
       throw new Exception('Query ' . $this->query . ' failed.');
@@ -396,10 +409,16 @@ class PubmedFieldEntrezClientnew {
 
     return $result;
   }
-  public function fetchSummaries($retStart=0) {
+  /**
+   *
+   */
+  public function fetchSummaries($retStart = 0) {
     return $this->fetchRecords($retStart, TRUE);
   }
-  public function fetchResult($retStart=0) {
+  /**
+   *
+   */
+  public function fetchResult($retStart = 0) {
     return $this->fetchRecords($retStart);
   }
 
@@ -419,12 +438,15 @@ class PubmedFieldEntrezClientnew {
    *   the sequential number of the first record retrieved - default=0
    *   which will retrieve the first record
    * @param bool $summaries
+   *
    * @return \SimpleXMLElement
+   *
    * @throws \Exception
+   *
    * @see search
    * @see setReturnMax
    */
-  public function fetchRecords($retStart=0, $summaries = FALSE) {
+  public function fetchRecords($retStart = 0, $summaries = FALSE) {
     if (is_null($this->webEnvironment)) {
       throw new Exception(t('No web environment set.'));
     }
@@ -433,9 +455,9 @@ class PubmedFieldEntrezClientnew {
     $params['retstart'] = $retStart;
     $params['retmax'] = $this->getReturnMax();
     $params['db'] = $this->getDatabase();
-    //$params['retmode'] = 'xml';
+    // $params['retmode'] = 'xml';
     $params['format'] = 'text';
-	$params['report'] = 'xml';
+    $params['report'] = 'xml';
     if (isset($this->dateRange)) {
       $params['mindate'] = $this->getMinDate();
       $params['maxdate'] = $this->getMaxDate();
@@ -455,12 +477,16 @@ class PubmedFieldEntrezClientnew {
 
     $result = @simplexml_load_string($result->data);
 
-
-    if (isset($result->body->pre->ERROR)) return FALSE;
+    if (isset($result->body->pre->ERROR)) {
+      return FALSE;
+    }
 
     return $result;
   }
 
+  /**
+   *
+   */
   public function post($uids) {
     $params['db'] = $this->getDatabase();
     $params['id'] = implode(',', $uids);
@@ -479,9 +505,9 @@ class PubmedFieldEntrezClientnew {
     }
 
     if (isset($result->WebEnv)) {
-      $this->webEnvironment = (string)$result->WebEnv;
-      $this->queryKey = (int)$result->QueryKey;
-      $this->count = (int)$result->Count;
+      $this->webEnvironment = (string) $result->WebEnv;
+      $this->queryKey = (int) $result->QueryKey;
+      $this->count = (int) $result->Count;
     }
 
   }
