@@ -6,38 +6,47 @@
  * @todo Do we want to  update the result list only when saving the field?
  */
 
-/*
- * Implementation of hook_menu
- */
+/**
+ * .
+ *
+ * Implementation of hook_menu.
+ *
+ * .*/
 function simplepubmed_menu() {
   $items = array();
   $items['admin/config/services/manage-simplepubmed'] = array(
-     'title' => 'Simple PubMed Configurations',
-     'description' => 'Simple PubMed Configurations',
-     'page callback' => 'drupal_get_form',
-     'page arguments' => array('manage_simplepubmed_settings'),
-     'access arguments' => array('administer Simple PubMed Configurations'),
-	 'access callback' => 'simplepubmed__check_access',
-     'type' => MENU_NORMAL_ITEM,
+    'title' => 'Simple PubMed Configurations',
+    'description' => 'Simple PubMed Configurations',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('manage_simplepubmed_settings'),
+    'access arguments' => array('administer Simple PubMed Configurations'),
+    'access callback' => 'simplepubmed__check_access',
+    'type' => MENU_NORMAL_ITEM,
   );
   return $items;
 }
 
-/*
- * Implementation of access function
- */
-function simplepubmed__check_access($account=NULL) {
+/**
+ * .
+ *
+ * Implementation of access function.
+ *
+ * .*/
+function simplepubmed__check_access($account = NULL) {
   if (user_is_anonymous()) {
     return FALSE;
   }
   return TRUE;
 }
 
-/*
- * Simple PubMed Configuration Form
- */
-function manage_simplepubmed_settings() { 
-  $form['access']= array(
+/**
+ * .
+ *
+ * Simple PubMed Configuration Form.
+ *
+ * .*/
+function manage_simplepubmed_settings() {
+  $form['access'] = array(
     '#type' => 'vertical_tabs',
     '#type' => 'fieldset',
     '#title' => t('Simple PubMed Configuration'),
@@ -45,11 +54,11 @@ function manage_simplepubmed_settings() {
   );
   $form['access']['filter'] = array(
     '#type' => 'vertical_tabs',
-	'#group' => 'access',
-	'#title' => t('Filter'),
-	'#collapsible' => TRUE,
-	'#collapsed' => TRUE,
-	'#tree' => TRUE,
+    '#group' => 'access',
+    '#title' => t('Filter'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#tree' => TRUE,
   );
   $form['access']['filter']['submit'] = array(
     '#type' => 'submit',
@@ -138,9 +147,11 @@ function simplepubmed_field_formatter_view($entity_type, $entity, $field, $insta
     case 'simplepubmed_textfield':
       foreach ($items as $delta => $item) {
         // The outpur. $item['pubmed_ids'] is the array of publications.
-        if (!is_array($item['pubmed_ids'])) $item['pubmed_ids'] = array();
+        if (!is_array($item['pubmed_ids'])) {
+          $item['pubmed_ids'] = array();
+        }
         $element[$delta] = array(
-          '#markup' => theme('simplepubmed_pumbedids-list', array('publications' => $item['pubmed_ids']))
+          '#markup' => theme('simplepubmed_pumbedids-list', array('publications' => $item['pubmed_ids'])),
         );
       }
       break;
@@ -167,15 +178,15 @@ function simplepubmed_field_widget_info() {
 }
 
 /**
-* Implements hook_field_widget_form().
-*
-* We provide the form widget for our field. For now it is only a simple text
-* field but we could implement some kind of live search feature. We are adding
-* pubmed_field_validate_id() as a validation callback validate intput
-* and process the query.
-*
-* @see pubmed_field_validate_id()
-*/
+ * Implements hook_field_widget_form().
+ *
+ * We provide the form widget for our field. For now it is only a simple text
+ * field but we could implement some kind of live search feature. We are adding
+ * pubmed_field_validate_id() as a validation callback validate intput
+ * and process the query.
+ *
+ * @see pubmed_field_validate_id()
+ */
 function simplepubmed_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
   $widget = $element;
   $widget['#delta'] = $delta;
@@ -190,7 +201,8 @@ function simplepubmed_field_widget_form(&$form, &$form_state, $field, $instance,
       $widget['#maxlength'] = 255;
       $widget['#description'] = t('Put in the PubMed Id.');
       break;
-	case 'simplepubmed_textfield':
+
+    case 'simplepubmed_textfield':
       $widget['#type'] = 'textfield';
       $widget['#weight'] = 1;
       $widget['#title'] = t('PubMed Search IDS');
@@ -199,7 +211,7 @@ function simplepubmed_field_widget_form(&$form, &$form_state, $field, $instance,
       $widget['#maxlength'] = 255;
       $widget['#description'] = t('Put in the PubMed Id.');
       break;
-	  
+
   }
   $element['pubmed_ids'] = $widget;
   $element['#type'] = 'fieldset';
@@ -216,15 +228,17 @@ function simplepubmed_field_widget_form(&$form, &$form_state, $field, $instance,
  * @see pubmed_field_field_presave()
  */
 function simplepubmed_field_validate_id($element, &$form_state) {
-  $delta = $element['#delta']; // TODO: Isn't there a better way to find out which element?
+  $delta = $element['#delta'];
+  // TODO: Isn't there a better way to find out which element?
   $field = $form_state['field'][$element['#field_name']][$element['#language']]['field'];
   $field_name = $field['field_name'];
   // Only do something if correct field was found.
-  if (!isset($form_state['values'][$field_name][$element['#language']][$delta]['pubmed_ids']))
+  if (!isset($form_state['values'][$field_name][$element['#language']][$delta]['pubmed_ids'])) {
     return;
+  }
 
   // Get the input term string to use for the query.
-  $pubmed_term = (string)$form_state['values'][$field_name][$element['#language']][$delta]['pubmed_ids'];
+  $pubmed_term = (string) $form_state['values'][$field_name][$element['#language']][$delta]['pubmed_ids'];
   // If no term is specified, set result NULL for result ids and return.
   if (empty($pubmed_term)) {
     form_set_value($element, NULL, $form_state);
@@ -232,8 +246,12 @@ function simplepubmed_field_validate_id($element, &$form_state) {
   }
 
   // Set the result ids.
-  if (empty($pubmed_ids)) form_set_value($element, NULL, $form_state);
-  else form_set_value($element, $pubmed_ids, $form_state);
+  if (empty($pubmed_ids)) {
+    form_set_value($element, NULL, $form_state);
+  }
+  else {
+    form_set_value($element, $pubmed_ids, $form_state);
+  }
 }
 
 /**
@@ -245,64 +263,66 @@ function simplepubmed_field_validate_id($element, &$form_state) {
  * @return
  *   Returns an associative array of the form (id => title).
  */
-function _simplepubmed_query_pubmed($term,$nid) {
+function _simplepubmed_query_pubmed($term, $nid) {
 
   watchdog('simplepubmed', 'Query pubmed for PubMed ID: @id.', array('@id' => $term));
   // Start the PubMed Query.
   try {
-    if (!module_load_include('inc', 'simplepubmed', 'simplepubmed.entrezclient'))
-    return;
-    $client = new PubmedFieldEntrezClientnew;
+    if (!module_load_include('inc', 'simplepubmed', 'simplepubmed.entrezclient')) {
+      return;
+    }
+    $client = new PubmedFieldEntrezClientnew();
     $client->setTerm($term);
     // Set maximum number of results.
-    $client->setReturnMax((int)variable_get('simplepubmed_limit_results', 100));
-    $result = $client->search(0); // Start search query.
+    $client->setReturnMax((int) variable_get('simplepubmed_limit_results', 100));
+    $result = $client->search(0);
+    // Start search query.
     // $pubmed_ids will store the result ids of the query.
-    $idlist = (array)$result->IdList;
+    $idlist = (array) $result->IdList;
     $pubmed_ids = is_array($idlist['Id']) ? array_combine($idlist['Id'], $idlist['Id'])
       : array($idlist['Id'] => $idlist['Id']);
-    // Fetch results
+    // Fetch results.
     $results = $client->fetchRecords(0, TRUE);
     $authorlist = array();
     foreach ($results as $result) {
-      $result = (array)$result; 
+      $result = (array) $result;
       if (isset($result['Id']) && isset($result['Item']) && isset($result['Item'][5]) && is_string($result['Item'][5])) {
         $pubmed_ids[$result['Id']] = new stdClass();
-        $pubmed_ids[$result['Id']]->field_pubmed_id = (int)$result['Id'];
+        $pubmed_ids[$result['Id']]->field_pubmed_id = (int) $result['Id'];
         $pubmed_ids[$result['Id']]->title = check_plain($result['Item'][5]);
-	    $pubmed_ids[$result['Id']]->author = check_plain($result['Item'][4]);
-		$pubmed_ids[$result['Id']]->issue = check_plain($result['Item'][7]);
-		$pubmed_ids[$result['Id']]->volume_ = check_plain($result['Item'][6]);
-		$pubmed_ids[$result['Id']]->pagination = check_plain($result['Item'][8]);
-		$pubmed_ids[$result['Id']]->paginationcombined = check_plain($result['Item'][2]);
-		$pubmed_ids[$result['Id']]->paginationcombined .= ' ';
-		$pubmed_ids[$result['Id']]->paginationcombined .= check_plain($result['Item'][23]);
-		unset($authorlist);
-		$authorlist =  (array)$result['Item'][3];
-		$pubmed_ids[$result['Id']]->authorlist = $authorlist['Item'];
+        $pubmed_ids[$result['Id']]->author = check_plain($result['Item'][4]);
+        $pubmed_ids[$result['Id']]->issue = check_plain($result['Item'][7]);
+        $pubmed_ids[$result['Id']]->volume_ = check_plain($result['Item'][6]);
+        $pubmed_ids[$result['Id']]->pagination = check_plain($result['Item'][8]);
+        $pubmed_ids[$result['Id']]->paginationcombined = check_plain($result['Item'][2]);
+        $pubmed_ids[$result['Id']]->paginationcombined .= ' ';
+        $pubmed_ids[$result['Id']]->paginationcombined .= check_plain($result['Item'][23]);
+        unset($authorlist);
+        $authorlist = (array) $result['Item'][3];
+        $pubmed_ids[$result['Id']]->authorlist = $authorlist['Item'];
         $pubmed_ids[$result['Id']]->journal = check_plain($result['Item'][2]);
-		$givendate = check_plain($result['Item'][0]);
-		$createddate = date("Y-m-d H:i:s", strtotime($givendate));
+        $givendate = check_plain($result['Item'][0]);
+        $createddate = date("Y-m-d H:i:s", strtotime($givendate));
         $pubmed_ids[$result['Id']]->date_published = $createddate;
-        $pubmed_ids[$result['Id']]->pubmed_url = 'http://www.ncbi.nlm.nih.gov/pubmed/' . (int)$result['Id'];
+        $pubmed_ids[$result['Id']]->pubmed_url = 'http://www.ncbi.nlm.nih.gov/pubmed/' . (int) $result['Id'];
       }
     }
-	$shorttext = '';
-	try {
-	  $newresults = $client->fetchRecords(0, FALSE);
-	  $newresults = (array)$newresults;
-	  $PubmedArticle = (array)$newresults['PubmedArticle'];
-	  $MedlineCitation = (array)$PubmedArticle['MedlineCitation'];
-      $Article = (array)$MedlineCitation['Article'];
-	  $Teaser = (array)$Article['Abstract'];
-	  if(isset($Teaser['AbstractText'])) {
-	    $shorttext = $Teaser['AbstractText'];
-	  }
-	  $pubmed_ids[$result['Id']]->shorttext = $shorttext;
-	}
-	catch (Exception $e) {
-	
-	}
+    $shorttext = '';
+    try {
+      $newresults = $client->fetchRecords(0, FALSE);
+      $newresults = (array) $newresults;
+      $PubmedArticle = (array) $newresults['PubmedArticle'];
+      $MedlineCitation = (array) $PubmedArticle['MedlineCitation'];
+      $Article = (array) $MedlineCitation['Article'];
+      $Teaser = (array) $Article['Abstract'];
+      if (isset($Teaser['AbstractText'])) {
+        $shorttext = $Teaser['AbstractText'];
+      }
+      $pubmed_ids[$result['Id']]->shorttext = $shorttext;
+    }
+    catch (Exception $e) {
+
+    }
     // Set defaults if item not fetched.
     $dummy = new stdClass();
     $dummy->pubmedid = NULL;
@@ -312,9 +332,9 @@ function _simplepubmed_query_pubmed($term,$nid) {
     foreach ($pubmed_ids as $pubmed_id => $publication) {
       if (!is_object($pubmed_ids[$pubmed_id])) {
         $pubmed_ids[$pubmed_id] = $dummy;
-        $pubmed_ids[$pubmed_id]->id = (int)$pubmed_ids[$pubmed_id];
-        $pubmed_ids[$pubmed_id]->pubmed_url = 'http://www.ncbi.nlm.nih.gov/pubmed/' . (int)$pubmed_ids[$pubmed_id];
-		$pubmed_ids[$pubmed_id]->shorttext = $shorttext;
+        $pubmed_ids[$pubmed_id]->id = (int) $pubmed_ids[$pubmed_id];
+        $pubmed_ids[$pubmed_id]->pubmed_url = 'http://www.ncbi.nlm.nih.gov/pubmed/' . (int) $pubmed_ids[$pubmed_id];
+        $pubmed_ids[$pubmed_id]->shorttext = $shorttext;
       }
     }
   }
@@ -343,13 +363,13 @@ function simplepubmed_field_presave($entity_type, $entity, $field, $instance, $l
 /**
  * Implements hook_field_load().
  *
- * unserializes pubmed_ids.
+ * Unserializes pubmed_ids.
  */
 function simplepubmed_field_load($entity_type, $entities, $field, $instances, $langcode, &$items, $age) {
   foreach ($entities as $id => $entity) {
     foreach ($items[$id] as $delta => $item) {
       if ($field['type'] == 'pubmed_field_pumbedids') {
-        $items[$id][$delta]['pubmed_ids'] = isset($item['pubmed_ids']) ? 
+        $items[$id][$delta]['pubmed_ids'] = isset($item['pubmed_ids']) ?
           unserialize($item['pubmed_ids']) : array();
       }
     }
@@ -370,7 +390,8 @@ function simplepubmed_field_load($entity_type, $entities, $field, $instances, $l
  */
 function simplepubmed_cronapi($op, $job = NULL) {
   $items['pubmed_field_cron'] = array(
-      'rule' => '1 2 * * *', // Once a day.
+    'rule' => '1 2 * * *',
+  // Once a day.
   );
   return $items;
 }
@@ -383,12 +404,12 @@ function simplepubmed_cronapi($op, $job = NULL) {
  * @todo Split tasks into cron queue and use cronapi.
  */
 function simplepubmed_cron() {
-  // Call the cron function
+  // Call the cron function.
   data_simplepumbed_import();
 }
 
 /**
- * Implements cron pulling function
+ * Implements cron pulling function.
  */
 function data_simplepubmed_import() {
   $del = get_all_nids_to_delete();
@@ -398,129 +419,129 @@ function data_simplepubmed_import() {
     $subquery = db_select('field_data_' . $field->field_name, 'fd');
     $subquery->addField('fd', $field->field_name . '_pubmed_ids', 'pubmed_ids');
     $subquery->addField('fd', 'entity_id', 'nid');
-	$subquery->addField('fd', 'entity_type', 'type');
+    $subquery->addField('fd', 'entity_type', 'type');
     $subresult = $subquery->execute();
     while ($field_data = $subresult->fetchObject()) {
-	  if($field_data->pubmed_ids) {
-	    $pid = unserialize($field_data->pubmed_ids);
-		$nid = $field_data->nid;
-		$type = $field_data->type;
-        $data = _simplepubmed_query_pubmed($pid,$nid);
-		$saves = save_new_publication($data,$nid,$type);
-	  }
+      if ($field_data->pubmed_ids) {
+        $pid = unserialize($field_data->pubmed_ids);
+        $nid = $field_data->nid;
+        $type = $field_data->type;
+        $data = _simplepubmed_query_pubmed($pid, $nid);
+        $saves = save_new_publication($data, $nid, $type);
+      }
     }
-   }
-   drupal_set_message(t('All records imported successfully.'), 'status');
+  }
+  drupal_set_message(t('All records imported successfully.'), 'status');
 }
 
 /**
  * Triggers hook pubmed_field_update preprocessing pubmed data first.
- * Updates in future
+ * Updates in future.
  */
 function simplepubmed_invoke_pubmed_field_update($new_pubmed_ids, $old_pubmed_ids, $nid) {
- // Update in 
+  // Update in.
 }
 
 /**
- * Implements importing datas in to node
+ * Implements importing datas in to node.
  */
 function save_new_publication($data, $nid, $type = NULL) {
   $dummysave = '';
-  if(isset($data->field_pubmed_id) && $nid) {
-	$node_type = variable_get('simplepubmed_content_type', 'pumbed_content');
-    $check = check_pumbid_exists($data->field_pubmed_id,$nid);
-	if($check) {	
-	  try {
-		$dummy         = new stdClass();
-		$dummy->title  = $data->title;
-		$dummy->uid    = 1;
-		$dummy->status = 1;
-		$dummy->type   = $node_type;
-		$dummy->field_date_published = array();
-		$dummy->field_pubmed_pumbed_url = array();
-		$dummy->field_pubmed_abstract = array();
-		$dummy->field_pubmed_author = array();
-		$dummy->field_pubmed_author_list = array();
-		$dummy->field_pubmed_journal = array();
-		$dummy->field_pubmed_pubmed_id = array();
-		$dummy->field_pubmed_related_entity = array();
-		$dummy->field_pubmed_entity_type = array();
-		$dummy->field_pubmed_pagination = array();
-		$dummy->field_pubmed_pag_combined = array();	
-		$dummy->field_pubmed_volume_ = array();
-		$dummy->field_pubmed_issue = array();			
-		if($data->date_published) {
-		  $dummy->field_pubmed_date_published['und'][0]['value'] = $data->date_published;
-		  $dummy->field_pubmed_date_published['und'][0]['timezone'] = 'America/New_York';
-		  $dummy->field_pubmed_date_published['und'][0]['timezone_db'] = 'America/New_York';
-		  $dummy->field_pubmed_date_published['und'][0]['date_type'] = 'datetime';
-		}
-		if($data->pubmed_url) {
-		  $dummy->field_pubmed_pumbed_url['und'][0]['value'] = $data->pubmed_url;
-		}
-		if($data->pagination) {
-		  $dummy->field_pubmed_pagination['und'][0]['value'] = $data->pagination;
-		}
-		if($data->paginationcombined) {
-		  $dummy->field_pubmed_pag_combined['und'][0]['value'] = $data->paginationcombined;
-		}
-		if($data->issue) {
-		  $dummy->field_pubmed_issue['und'][0]['value'] = $data->issue;
-		}
-		if($data->volume_) {
-		  $dummy->field_pubmed_volume_['und'][0]['value'] = $data->volume_;
-		}	
-		if($data->shorttext) {
-		   $dummy->field_pubmed_abstract['und'][0]['value'] = '';
-		    if(is_array($data->shorttext )) {
-			  foreach($data->shorttext as $key=>$val) {
-				$dummy->field_pubmed_abstract['und'][0]['value'] .= $val;
-			  }
-			}
-		    else {
-		      $dummy->field_pubmed_abstract['und'][0]['value'] = $data->shorttext;
-		    }
-		}
-		if($data->author) {
-		  $dummy->field_pubmed_author['und'][0]['value'] = $data->author;
-		}
-		if(count($data->authorlist)) {
-		  if(is_array($data->authorlist )) {
-		    foreach($data->authorlist as $key=>$val) {
-			  $dummy->field_pubmed_author_list['und'][]['value'] = $val;
-		    }
-		  }
-		  else {
-		    $dummy->field_pubmed_author_list['und'][]['value'] = '';
-		  }
-		}
-		if($data->journal) {
-		  $dummy->field_pubmed_journal['und'][0]['value'] = $data->journal;
-		}
-		if($data->field_pubmed_id) {
-		  $dummy->field_pubmed_pubmed_id['und'][0]['value'] = $data->field_pubmed_id;
-		}
-		if($nid) {
-		  $dummy->field_pubmed_related_entity['und'][0]['value'] = $nid;
-		}
-		if($type) {
-		  $dummy->field_pubmed_entity_type['und'][0]['value'] = $type;
-		}
-		$dummysave = node_save($dummy);
-	  }
-	  catch (Exception $e) {
-	    $proceed = 1;
-	  }
+  if (isset($data->field_pubmed_id) && $nid) {
+    $node_type = variable_get('simplepubmed_content_type', 'pumbed_content');
+    $check = check_pumbid_exists($data->field_pubmed_id, $nid);
+    if ($check) {
+      try {
+        $dummy         = new stdClass();
+        $dummy->title  = $data->title;
+        $dummy->uid    = 1;
+        $dummy->status = 1;
+        $dummy->type   = $node_type;
+        $dummy->field_date_published = array();
+        $dummy->field_pubmed_pumbed_url = array();
+        $dummy->field_pubmed_abstract = array();
+        $dummy->field_pubmed_author = array();
+        $dummy->field_pubmed_author_list = array();
+        $dummy->field_pubmed_journal = array();
+        $dummy->field_pubmed_pubmed_id = array();
+        $dummy->field_pubmed_related_entity = array();
+        $dummy->field_pubmed_entity_type = array();
+        $dummy->field_pubmed_pagination = array();
+        $dummy->field_pubmed_pag_combined = array();
+        $dummy->field_pubmed_volume_ = array();
+        $dummy->field_pubmed_issue = array();
+        if ($data->date_published) {
+          $dummy->field_pubmed_date_published['und'][0]['value'] = $data->date_published;
+          $dummy->field_pubmed_date_published['und'][0]['timezone'] = 'America/New_York';
+          $dummy->field_pubmed_date_published['und'][0]['timezone_db'] = 'America/New_York';
+          $dummy->field_pubmed_date_published['und'][0]['date_type'] = 'datetime';
+        }
+        if ($data->pubmed_url) {
+          $dummy->field_pubmed_pumbed_url['und'][0]['value'] = $data->pubmed_url;
+        }
+        if ($data->pagination) {
+          $dummy->field_pubmed_pagination['und'][0]['value'] = $data->pagination;
+        }
+        if ($data->paginationcombined) {
+          $dummy->field_pubmed_pag_combined['und'][0]['value'] = $data->paginationcombined;
+        }
+        if ($data->issue) {
+          $dummy->field_pubmed_issue['und'][0]['value'] = $data->issue;
+        }
+        if ($data->volume_) {
+          $dummy->field_pubmed_volume_['und'][0]['value'] = $data->volume_;
+        }
+        if ($data->shorttext) {
+          $dummy->field_pubmed_abstract['und'][0]['value'] = '';
+          if (is_array($data->shorttext)) {
+            foreach ($data->shorttext as $key => $val) {
+              $dummy->field_pubmed_abstract['und'][0]['value'] .= $val;
+            }
+          }
+          else {
+            $dummy->field_pubmed_abstract['und'][0]['value'] = $data->shorttext;
+          }
+        }
+        if ($data->author) {
+          $dummy->field_pubmed_author['und'][0]['value'] = $data->author;
+        }
+        if (count($data->authorlist)) {
+          if (is_array($data->authorlist)) {
+            foreach ($data->authorlist as $key => $val) {
+              $dummy->field_pubmed_author_list['und'][]['value'] = $val;
+            }
+          }
+          else {
+            $dummy->field_pubmed_author_list['und'][]['value'] = '';
+          }
+        }
+        if ($data->journal) {
+          $dummy->field_pubmed_journal['und'][0]['value'] = $data->journal;
+        }
+        if ($data->field_pubmed_id) {
+          $dummy->field_pubmed_pubmed_id['und'][0]['value'] = $data->field_pubmed_id;
+        }
+        if ($nid) {
+          $dummy->field_pubmed_related_entity['und'][0]['value'] = $nid;
+        }
+        if ($type) {
+          $dummy->field_pubmed_entity_type['und'][0]['value'] = $type;
+        }
+        $dummysave = node_save($dummy);
+      }
+      catch (Exception $e) {
+        $proceed = 1;
+      }
     }
   }
   return $dummysave;
 }
 
 /**
- * Checks to see if the PubMed Ids is already Imported
+ * Checks to see if the PubMed Ids is already Imported.
  */
-function check_pumbid_exists($pumbid,$nid) {
-  $result = db_query("SELECT * FROM {field_data_field_pubmed_pubmed_id} WHERE `field_pubmed_pubmed_id_value`= '".$pumbid."'");
+function check_pumbid_exists($pumbid, $nid) {
+  $result = db_query("SELECT * FROM {field_data_field_pubmed_pubmed_id} WHERE `field_pubmed_pubmed_id_value`= '" . $pumbid . "'");
   $check = 1;
   foreach ($result as $record) {
     $check = 0;
@@ -529,7 +550,7 @@ function check_pumbid_exists($pumbid,$nid) {
 }
 
 /**
- * Find nids not to delete
+ * Find nids not to delete.
  */
 function get_all_nids_to_delete($nidstodelete = NULL) {
   $nids = array();
@@ -542,33 +563,33 @@ function get_all_nids_to_delete($nidstodelete = NULL) {
     $subquery->addField('fd', 'entity_id', 'nid');
     $subresult = $subquery->execute();
     while ($field_data = $subresult->fetchObject()) {
-	  if($field_data->pubmed_ids) {
-		$nids[] = unserialize($field_data->pubmed_ids);
-	  }
-	}
+      if ($field_data->pubmed_ids) {
+        $nids[] = unserialize($field_data->pubmed_ids);
+      }
+    }
   }
 
-  if(count($nids)) {
+  if (count($nids)) {
     $nidsuneque = array_unique($nids);
-	$nidstosearch = implode(',', $nidsuneque);
-	// Get all unwanted imported node ids
-	$result = db_query("SELECT * FROM {field_data_field_pubmed_pubmed_id} WHERE field_pubmed_pubmed_id_value NOT IN (:d)",array(":d"=>$nidstosearch));
-	$check = 1;
-	foreach ($result as $record) {
-	  $nidstodelete[] = $record->entity_id;
-	}
-    if(count($nidstodelete)) {
-	  $nidstodelete = array_unique($nidstodelete);
-	  foreach($nidstodelete as $key=>$val) {
-	    try {
-		  // Delete the unwanted imported node
-	      node_delete($val);
-	    }
-		catch (Exception $e) {
-	      $proceed = 1;
-	    } 
-	  }
-	}
+    $nidstosearch = implode(',', $nidsuneque);
+    // Get all unwanted imported node ids.
+    $result = db_query("SELECT * FROM {field_data_field_pubmed_pubmed_id} WHERE field_pubmed_pubmed_id_value NOT IN (:d)", array(":d" => $nidstosearch));
+    $check = 1;
+    foreach ($result as $record) {
+      $nidstodelete[] = $record->entity_id;
+    }
+    if (count($nidstodelete)) {
+      $nidstodelete = array_unique($nidstodelete);
+      foreach ($nidstodelete as $key => $val) {
+        try {
+          // Delete the unwanted imported node.
+          node_delete($val);
+        }
+        catch (Exception $e) {
+          $proceed = 1;
+        }
+      }
+    }
   }
   return $nidstodelete;
 }
