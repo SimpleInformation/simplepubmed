@@ -27,8 +27,7 @@ function simplepubmed_menu() {
 }
 
 /**
- * 
-.
+ *
  *
  * Implementation of access function.
  *
@@ -41,8 +40,7 @@ function simplepubmed__check_access($account = NULL) {
 }
 
 /**
- * 
-.
+ *
  *
  * Simple PubMed Configuration Form.
  *
