@@ -2,7 +2,7 @@
 
 /**
  * @file
- * pubmedidget hook function api documentation.
+ * Pubmedidget hook function api documentation.
  */
 
 /**
