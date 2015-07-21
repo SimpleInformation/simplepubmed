@@ -405,7 +405,7 @@ function simplepubmed_cronapi($op, $job = NULL) {
  */
 function simplepubmed_cron() {
   // Call the cron function.
-  data_simplepumbed_import();
+  data_simplepubmed_import();
 }
 
 /**
@@ -414,7 +414,7 @@ function simplepubmed_cron() {
 function data_simplepubmed_import() {
   $del = get_all_nids_to_delete();
   $result = db_query('SELECT field_name FROM {field_config} WHERE type = :type',
-    array(':type' => 'pubmed_field_pumbedids'));
+    array(':type' => 'pubmed_field_pubmedids'));
   while ($field = $result->fetchObject()) {
     $subquery = db_select('field_data_' . $field->field_name, 'fd');
     $subquery->addField('fd', $field->field_name . '_pubmed_ids', 'pubmed_ids');
