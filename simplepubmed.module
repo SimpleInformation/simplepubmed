@@ -471,61 +471,61 @@ function save_new_publication($data, $nid, $type = NULL) {
         $dummy->field_pubmed_volume_ = array();
         $dummy->field_pubmed_issue = array();
         if ($data->date_published) {
-          $dummy->field_pubmed_date_published['und'][0]['value'] = $data->date_published;
-          $dummy->field_pubmed_date_published['und'][0]['timezone'] = 'America/New_York';
-          $dummy->field_pubmed_date_published['und'][0]['timezone_db'] = 'America/New_York';
-          $dummy->field_pubmed_date_published['und'][0]['date_type'] = 'datetime';
+          $dummy->field_pubmed_date_published[LANGUAGE_NONE][0]['value'] = $data->date_published;
+          $dummy->field_pubmed_date_published[LANGUAGE_NONE][0]['timezone'] = 'America/New_York';
+          $dummy->field_pubmed_date_published[LANGUAGE_NONE][0]['timezone_db'] = 'America/New_York';
+          $dummy->field_pubmed_date_published[LANGUAGE_NONE][0]['date_type'] = 'datetime';
         }
         if ($data->pubmed_url) {
-          $dummy->field_pubmed_pubmed_url['und'][0]['value'] = $data->pubmed_url;
+          $dummy->field_pubmed_pubmed_url[LANGUAGE_NONE][0]['value'] = $data->pubmed_url;
         }
         if ($data->pagination) {
-          $dummy->field_pubmed_pagination['und'][0]['value'] = $data->pagination;
+          $dummy->field_pubmed_pagination[LANGUAGE_NONE][0]['value'] = $data->pagination;
         }
         if ($data->paginationcombined) {
-          $dummy->field_pubmed_pag_combined['und'][0]['value'] = $data->paginationcombined;
+          $dummy->field_pubmed_pag_combined[LANGUAGE_NONE][0]['value'] = $data->paginationcombined;
         }
         if ($data->issue) {
-          $dummy->field_pubmed_issue['und'][0]['value'] = $data->issue;
+          $dummy->field_pubmed_issue[LANGUAGE_NONE][0]['value'] = $data->issue;
         }
         if ($data->volume_) {
-          $dummy->field_pubmed_volume_['und'][0]['value'] = $data->volume_;
+          $dummy->field_pubmed_volume_[LANGUAGE_NONE][0]['value'] = $data->volume_;
         }
         if ($data->shorttext) {
-          $dummy->field_pubmed_abstract['und'][0]['value'] = '';
+          $dummy->field_pubmed_abstract[LANGUAGE_NONE][0]['value'] = '';
           if (is_array($data->shorttext)) {
             foreach ($data->shorttext as $key => $val) {
-              $dummy->field_pubmed_abstract['und'][0]['value'] .= $val;
+              $dummy->field_pubmed_abstract[LANGUAGE_NONE][0]['value'] .= $val;
             }
           }
           else {
-            $dummy->field_pubmed_abstract['und'][0]['value'] = $data->shorttext;
+            $dummy->field_pubmed_abstract[LANGUAGE_NONE][0]['value'] = $data->shorttext;
           }
         }
         if ($data->author) {
-          $dummy->field_pubmed_author['und'][0]['value'] = $data->author;
+          $dummy->field_pubmed_author[LANGUAGE_NONE][0]['value'] = $data->author;
         }
         if (count($data->authorlist)) {
           if (is_array($data->authorlist)) {
             foreach ($data->authorlist as $key => $val) {
-              $dummy->field_pubmed_author_list['und'][]['value'] = $val;
+              $dummy->field_pubmed_author_list[LANGUAGE_NONE][]['value'] = $val;
             }
           }
           else {
-            $dummy->field_pubmed_author_list['und'][]['value'] = '';
+            $dummy->field_pubmed_author_list[LANGUAGE_NONE][]['value'] = '';
           }
         }
         if ($data->journal) {
-          $dummy->field_pubmed_journal['und'][0]['value'] = $data->journal;
+          $dummy->field_pubmed_journal[LANGUAGE_NONE][0]['value'] = $data->journal;
         }
         if ($data->field_pubmed_id) {
-          $dummy->field_pubmed_pubmed_id['und'][0]['value'] = $data->field_pubmed_id;
+          $dummy->field_pubmed_pubmed_id[LANGUAGE_NONE][0]['value'] = $data->field_pubmed_id;
         }
         if ($nid) {
-          $dummy->field_pubmed_related_entity['und'][0]['value'] = $nid;
+          $dummy->field_pubmed_related_entity[LANGUAGE_NONE][0]['value'] = $nid;
         }
         if ($type) {
-          $dummy->field_pubmed_entity_type['und'][0]['value'] = $type;
+          $dummy->field_pubmed_entity_type[LANGUAGE_NONE][0]['value'] = $type;
         }
         $dummysave = node_save($dummy);
       }
