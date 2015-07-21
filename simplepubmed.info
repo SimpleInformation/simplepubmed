@@ -1,5 +1,5 @@
 name = Simple PubMed
-description = This module provides a field/widget to specify PubMed ID for a PubMed query. The results of the query will be associated to the node.
+description = Simple PubMed provides a text field where you can put in a PubMed ID and Simple PubMed provides a content type in installation where you can see the imported node corresponding to PubMed IDS input.
 core = 7.x
 dependencies[] = date
 dependencies[] = date_popup
