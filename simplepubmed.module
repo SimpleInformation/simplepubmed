@@ -541,7 +541,8 @@ function save_new_publication($data, $nid, $type = NULL) {
  * Checks to see if the PubMed Ids is already Imported.
  */
 function check_pumbid_exists($pumbid, $nid) {
-  $result = db_query("SELECT * FROM {field_data_field_pubmed_pubmed_id} WHERE `field_pubmed_pubmed_id_value`= '" . $pumbid . "'");
+  $pumbid = check_plain($pumbid);
+  $result = db_query("SELECT * FROM {field_data_field_pubmed_pubmed_id} WHERE `field_pubmed_pubmed_id_value`= :d", array(":d" => $pumbid));
   $check = 1;
   foreach ($result as $record) {
     $check = 0;
