@@ -9,8 +9,8 @@
  *
  * Defines the database schema of the pubmed_field_pubmedids field.
  *
- * @param $field
- *
+ * @param string $field
+ *    The pubmed field type.
  * @return array
  */
 
