@@ -543,7 +543,7 @@ function check_pumbid_exists($pumbid, $nid) {
   $pumbid = check_plain($pumbid);
   $result = db_query("SELECT * FROM {field_data_field_pubmed_pubmed_id} WHERE `field_pubmed_pubmed_id_value`= :d", array(":d" => $pumbid));
   $check = 1;
-  foreach ($result as $record) {
+  if($result->rowCount()) {
     $check = 0;
   }
   return $check;
@@ -579,7 +579,7 @@ function get_all_nids_to_delete($nidstodelete = NULL) {
     }
     if (count($nidstodelete)) {
       $nidstodelete = array_unique($nidstodelete);
-      foreach ($nidstodelete as $key => $val) {
+      foreach ($nidstodelete as $val) {
         try {
           // Delete the unwanted imported node.
           node_delete($val);
