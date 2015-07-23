@@ -244,14 +244,6 @@ function simplepubmed_field_validate_id($element, &$form_state) {
     form_set_value($element, NULL, $form_state);
     return;
   }
-
-  // Set the result ids.
-  if (empty($pubmed_ids)) {
-    form_set_value($element, NULL, $form_state);
-  }
-  else {
-    form_set_value($element, $pubmed_ids, $form_state);
-  }
 }
 
 /**
