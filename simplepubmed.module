@@ -585,7 +585,6 @@ function get_all_nids_to_delete($nidstodelete = NULL) {
           node_delete($val);
         }
         catch (Exception $e) {
-          $proceed = 1;
         }
       }
     }
