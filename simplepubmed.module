@@ -7,7 +7,7 @@
  */
 
 /**
- * Implements hook_menu.
+ * Implements hook_menu().
  */
 function simplepubmed_menu() {
   $items = array();
@@ -240,13 +240,12 @@ function simplepubmed_field_validate_id($element, &$form_state) {
 /**
  * Queries the PubMed db.
  *
- * @param $term
+ * @param string $term
  *   The term to query for.
- * 
- * @param $nid
+ * @param string $nid
  *   The nid to query for.
  *
- * @return
+ * @return array
  *   Returns an associative array of the form (id => title).
  */
 function _simplepubmed_query_pubmed($term, $nid) {
@@ -422,7 +421,6 @@ function data_simplepubmed_import() {
 
 /**
  * Triggers hook pubmed_field_update preprocessing pubmed data first.
- * Updates in future.
  */
 function simplepubmed_invoke_pubmed_field_update($new_pubmed_ids, $old_pubmed_ids, $nid) {
   // Update in.
@@ -529,7 +527,7 @@ function check_pumbid_exists($pumbid, $nid) {
   $pumbid = check_plain($pumbid);
   $result = db_query("SELECT * FROM {field_data_field_pubmed_pubmed_id} WHERE `field_pubmed_pubmed_id_value`= :d", array(":d" => $pumbid));
   $check = 1;
-  if($result->rowCount()) {
+  if ($result->rowCount()) {
     $check = 0;
   }
   return $check;
