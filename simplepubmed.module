@@ -7,11 +7,8 @@
  */
 
 /**
- *
- *
- * Implementation of hook_menu.
- *
- * .*/
+ * Implements hook_menu.
+ */
 function simplepubmed_menu() {
   $items = array();
   $items['admin/config/services/manage-simplepubmed'] = array(
@@ -27,11 +24,8 @@ function simplepubmed_menu() {
 }
 
 /**
- *
- *
  * Implementation of access function.
- *
- * .*/
+ */
 function simplepubmed__check_access($account = NULL) {
   if (user_is_anonymous()) {
     return FALSE;
@@ -40,11 +34,8 @@ function simplepubmed__check_access($account = NULL) {
 }
 
 /**
- *
- *
  * Simple PubMed Configuration Form.
- *
- * .*/
+ */
 function manage_simplepubmed_settings() {
   $form['access'] = array(
     '#type' => 'vertical_tabs',
@@ -251,6 +242,9 @@ function simplepubmed_field_validate_id($element, &$form_state) {
  *
  * @param $term
  *   The term to query for.
+ * 
+ * @param $nid
+ *   The nid to query for.
  *
  * @return
  *   Returns an associative array of the form (id => title).
@@ -303,12 +297,12 @@ function _simplepubmed_query_pubmed($term, $nid) {
     try {
       $newresults = $client->fetchRecords(0, FALSE);
       $newresults = (array) $newresults;
-      $PubmedArticle = (array) $newresults['PubmedArticle'];
-      $MedlineCitation = (array) $PubmedArticle['MedlineCitation'];
-      $Article = (array) $MedlineCitation['Article'];
-      $Teaser = (array) $Article['Abstract'];
-      if (isset($Teaser['AbstractText'])) {
-        $shorttext = $Teaser['AbstractText'];
+      $pubmedarticle = (array) $newresults['PubmedArticle'];
+      $medlinecitation = (array) $pubmedarticle['MedlineCitation'];
+      $article = (array) $medlinecitation['Article'];
+      $teaser = (array) $article['Abstract'];
+      if (isset($teaser['AbstractText'])) {
+        $shorttext = $teaser['AbstractText'];
       }
       $pubmed_ids[$result['Id']]->shorttext = $shorttext;
     }
