@@ -412,7 +412,7 @@ function simplepubmed_cron() {
  * Implements cron pulling function.
  */
 function data_simplepubmed_import() {
-  $del = get_all_nids_to_delete();
+  get_all_nids_to_delete();
   $result = db_query('SELECT field_name FROM {field_config} WHERE type = :type',
     array(':type' => 'pubmed_field_pubmedids'));
   while ($field = $result->fetchObject()) {
@@ -427,7 +427,7 @@ function data_simplepubmed_import() {
         $nid = $field_data->nid;
         $type = $field_data->type;
         $data = _simplepubmed_query_pubmed($pid, $nid);
-        $saves = save_new_publication($data, $nid, $type);
+        save_new_publication($data, $nid, $type);
       }
     }
   }
@@ -494,7 +494,7 @@ function save_new_publication($data, $nid, $type = NULL) {
         if ($data->shorttext) {
           $dummy->field_pubmed_abstract[LANGUAGE_NONE][0]['value'] = '';
           if (is_array($data->shorttext)) {
-            foreach ($data->shorttext as $key => $val) {
+            foreach ($data->shorttext as $val) {
               $dummy->field_pubmed_abstract[LANGUAGE_NONE][0]['value'] .= $val;
             }
           }
@@ -507,7 +507,7 @@ function save_new_publication($data, $nid, $type = NULL) {
         }
         if (count($data->authorlist)) {
           if (is_array($data->authorlist)) {
-            foreach ($data->authorlist as $key => $val) {
+            foreach ($data->authorlist as $val) {
               $dummy->field_pubmed_author_list[LANGUAGE_NONE][]['value'] = $val;
             }
           }
