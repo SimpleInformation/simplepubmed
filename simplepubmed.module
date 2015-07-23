@@ -412,7 +412,7 @@ function simplepubmed_cron() {
  * Implements cron pulling function.
  */
 function data_simplepubmed_import() {
-  $del = get_all_nids_to_delete();
+  get_all_nids_to_delete();
   $result = db_query('SELECT field_name FROM {field_config} WHERE type = :type',
     array(':type' => 'pubmed_field_pubmedids'));
   while ($field = $result->fetchObject()) {
