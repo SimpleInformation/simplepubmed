@@ -254,7 +254,7 @@ function _simplepubmed_query_pubmed($term, $nid) {
   // Start the PubMed Query.
   try {
     if (!module_load_include('inc', 'simplepubmed', 'simplepubmed.entrezclient')) {
-      return;
+      return TRUE;
     }
     $client = new PubmedFieldEntrezClientnew();
     $client->setTerm($term);
