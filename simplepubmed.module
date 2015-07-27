@@ -1,7 +1,11 @@
 <?php
 /**
  * @file
- * The main file the Simplepubmed module.
+ * The Simplepubmed module call on data from the PubMed database.
+ *
+ * The module creates a content type to store the data pulled from
+ * the Pubmed database. It also creates a field of type text PUBMEDID
+ * used to call the data from PubMed.
  *
  * @todo Do we want to  update the result list only when saving the field?
  */
