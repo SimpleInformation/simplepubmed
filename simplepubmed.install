@@ -6,14 +6,19 @@
 
 /**
  * Implements hook_field_schema().
- *
+ */
+/**
  * Defines the database schema of the pubmed_field_pubmedids field.
  *
  * @param string $field
  *    The pubmed field type.
+ *
  * @return array
+ *    Pubmed ids
+ *
+ * @see http://drupal.org/node/146939
+ * @see schemaapi
  */
-
 function simplepubmed_field_schema($field) {
   if ($field['type'] == 'pubmed_field_pubmedids') {
     $columns = array(
@@ -59,11 +64,15 @@ function simplepubmed_install() {
 /**
  * Function to create UNIQUE content type name.
  *
+ * @param string $node_type
+ *    Test node of this type already exist.
+ * @param bool $ext
+ *    Counter of types.
+ *
  * @see node_type_get_types()
- * @param $node_type
- * @param $ext
  *
  * @return string
+ *    Returns node types.
  */
 function is_pubmed_node_type_already_exist($node_type, $ext) {
   $types = node_type_get_types();
@@ -125,9 +134,11 @@ function _pubmed_create_content_type() {
 /**
  * Callback to define fields.
  *
- * @param $t
+ * @param string $t
+ *    Translation element.
  *
  * @return array
+ *    Content type fields.
  */
 function _pubmed_installed_fields($t) {
   return array(
@@ -239,9 +250,11 @@ function _pubmed_installed_fields($t) {
 /**
  * Callback to define fields.
  *
- * @param $t
+ * @param string $t
+ *    Translation element.
  *
  * @return array
+ *    Content type fields.
  */
 function _pubmed_installed_instances($t) {
   return array(
