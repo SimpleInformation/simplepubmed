@@ -1,9 +1,11 @@
 <?php
 /**
- * @file EntrezClient.php
- * Provides Entrez client to retrieve items from the NCBI databases
- * Orginally writen by Stefan Freudenberg and used or changed by the
- * biblio module.
+ * @file
+ * EntrezClient.php.
+ *
+ * Provides Entrez client to retrieve items from the NCBI databases.
+ *
+ * Orginally writen by Stefan Freudenberg and used or changed by the biblio module.
  *
  * @see http://drupalcode.org/project/entrez.git
  * @see http://drupal.org/project/biblio
