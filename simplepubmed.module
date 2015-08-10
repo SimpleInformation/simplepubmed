@@ -255,7 +255,7 @@ function _simplepubmed_query_pubmed($term, $nid) {
   // Start the PubMed Query.
   try {
     if (!module_load_include('inc', 'simplepubmed', 'simplepubmed.entrezclient')) {
-      return;
+      return TRUE;
     }
     $client = new PubmedFieldEntrezClientnew();
     $client->setTerm($term);
@@ -280,7 +280,7 @@ function _simplepubmed_query_pubmed($term, $nid) {
         $pubmed_ids[$result['Id']]->issue = check_plain($result['Item'][7]);
         $pubmed_ids[$result['Id']]->volume_ = check_plain($result['Item'][6]);
         $pubmed_ids[$result['Id']]->pagination = check_plain($result['Item'][8]);
-        $pubmed_ids[$result['Id']]->paginationcombined = check_plain($result['Item'][2]);
+        $pubmed_ids[$result['Id']]->paginationcombined = check_plain($result['Item'][22]);
         $pubmed_ids[$result['Id']]->paginationcombined .= ' ';
         $pubmed_ids[$result['Id']]->paginationcombined .= check_plain($result['Item'][23]);
         unset($authorlist);
