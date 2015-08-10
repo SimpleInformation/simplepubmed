@@ -270,7 +270,7 @@ function _simplepubmed_query_pubmed($term, $nid) {
     $idlist = (array) $result->IdList;
     $pubmed_ids = is_array($idlist['Id']) ? array_combine($idlist['Id'], $idlist['Id'])
       : array($idlist['Id'] => $idlist['Id']);
-    // Fetch results.
+    // Fetch Results.
     $results = $client->fetchRecords(0, TRUE);
     $authorlist = array();
     foreach ($results as $result) {
